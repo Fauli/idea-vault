@@ -1,10 +1,13 @@
 import { BottomNav } from '@/components/bottom-nav'
+import { requireAuth } from '@/lib/auth'
 
-export default function AppLayout({
+export default async function AppLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  await requireAuth()
+
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-10 border-b border-foreground/10 bg-background">

@@ -8,7 +8,7 @@ A private, mobile-first PWA for storing and managing ideas, recipes, activities,
 - **Styling**: Tailwind CSS
 - **Database**: PostgreSQL
 - **ORM**: Prisma
-- **Auth**: Email + password (coming in Milestone B)
+- **Auth**: Email + password with cookie-based sessions
 - **Deployment**: Docker Compose
 
 ## Getting Started
@@ -45,16 +45,26 @@ A private, mobile-first PWA for storing and managing ideas, recipes, activities,
 4. **Run migrations**:
 
    ```bash
-   pnpm prisma db push
+   npx prisma migrate dev
    ```
 
-5. **Start development server**:
+5. **Seed users** (first time only):
+
+   ```bash
+   SEED_PASSWORD_F=yourpass1 SEED_PASSWORD_K=yourpass2 pnpm db:seed
+   ```
+
+   This creates two users:
+   - `f@pocket.local` with the password from `SEED_PASSWORD_F`
+   - `k@pocket.local` with the password from `SEED_PASSWORD_K`
+
+6. **Start development server**:
 
    ```bash
    pnpm dev
    ```
 
-6. Open [http://localhost:3000](http://localhost:3000)
+7. Open [http://localhost:3000](http://localhost:3000)
 
 ### Local Development (with Docker)
 
@@ -72,6 +82,8 @@ A private, mobile-first PWA for storing and managing ideas, recipes, activities,
 |----------|-------------|---------|
 | `DATABASE_URL` | PostgreSQL connection string | See .env.example |
 | `SESSION_SECRET` | Secret for session encryption | Generate a random 32-char string |
+| `SEED_PASSWORD_F` | Password for user F (seeding only) | - |
+| `SEED_PASSWORD_K` | Password for user K (seeding only) | - |
 
 ## Project Structure
 
@@ -97,7 +109,10 @@ A private, mobile-first PWA for storing and managing ideas, recipes, activities,
 - `pnpm build` - Build for production
 - `pnpm start` - Start production server
 - `pnpm lint` - Run ESLint
-- `pnpm prisma studio` - Open Prisma Studio
+- `pnpm test` - Run tests in watch mode
+- `pnpm test:run` - Run tests once
+- `pnpm db:seed` - Seed users (requires SEED_PASSWORD_F and SEED_PASSWORD_K)
+- `npx prisma studio` - Open Prisma Studio
 
 ## License
 

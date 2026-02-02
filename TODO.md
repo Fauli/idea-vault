@@ -49,14 +49,14 @@ Check off items as completed. Follow the order of milestones for a logical build
 - [x] Design mobile-first shell layout (header, main content area, bottom nav)
 - [x] Create bottom navigation component (Home, Add, Settings icons)
 - [x] Add viewport meta tags for mobile (no zoom, theme-color)
-- [ ] Test layout on mobile viewport (375px width)
+- [x] Test layout on mobile viewport (375px width)
 
 ### A5. Docker Development Environment
 - [x] Create `Dockerfile` for Next.js app (multi-stage build)
 - [x] Create `docker-compose.yml` for local development:
   - `app` service (Next.js)
   - `db` service (PostgreSQL 16+ with volume)
-- [ ] Create `docker-compose.override.yml` for dev-specific settings (hot reload)
+- [x] Create `docker-compose.override.yml` for dev-specific settings (hot reload)
 - [x] Add `.dockerignore`
 - [x] Test `docker-compose up` runs app + database
 
@@ -65,85 +65,85 @@ Check off items as completed. Follow the order of milestones for a logical build
 ## Milestone B — Authentication
 
 ### B1. User Schema & Database
-- [ ] Add `User` model to Prisma schema:
+- [x] Add `User` model to Prisma schema:
   - `id` (UUID, default uuid)
   - `email` (unique, not null)
   - `passwordHash` (not null)
   - `name` (optional)
   - `createdAt` (default now)
-- [ ] Add `Session` model to Prisma schema:
+- [x] Add `Session` model to Prisma schema:
   - `id` (UUID)
   - `userId` (FK to User)
   - `tokenHash` (unique)
   - `createdAt`
   - `expiresAt`
-- [ ] Run migration (`npx prisma migrate dev --name add-auth-tables`)
-- [ ] Generate Prisma client
+- [x] Run migration (`npx prisma migrate dev --name add-auth-tables`)
+- [x] Generate Prisma client
 
 ### B2. Password Hashing
-- [ ] Install bcrypt or argon2 (`npm install bcrypt` or `npm install argon2`)
-- [ ] Create `/lib/password.ts`:
+- [x] Install bcrypt or argon2 (`npm install bcrypt` or `npm install argon2`)
+- [x] Create `/lib/password.ts`:
   - `hashPassword(plain: string): Promise<string>`
   - `verifyPassword(plain: string, hash: string): Promise<boolean>`
-- [ ] Write unit tests for password functions
+- [x] Write unit tests for password functions
 
 ### B3. Session Management
-- [ ] Create `/lib/session.ts`:
+- [x] Create `/lib/session.ts`:
   - `createSession(userId: string): Promise<string>` (returns token)
   - `validateSession(token: string): Promise<User | null>`
   - `deleteSession(token: string): Promise<void>`
   - `deleteExpiredSessions(): Promise<void>` (cleanup utility)
-- [ ] Session token: generate with `crypto.randomBytes(32)`
-- [ ] Store hashed token in DB (not plain)
-- [ ] Set session expiry (e.g., 30 days)
+- [x] Session token: generate with `crypto.randomBytes(32)`
+- [x] Store hashed token in DB (not plain)
+- [x] Set session expiry (e.g., 30 days)
 
 ### B4. Auth Cookies
-- [ ] Create `/lib/cookies.ts`:
+- [x] Create `/lib/cookies.ts`:
   - `setSessionCookie(token: string)`
   - `getSessionCookie(): string | null`
   - `clearSessionCookie()`
-- [ ] Cookie settings: HttpOnly, Secure (in prod), SameSite=Lax, Path=/
+- [x] Cookie settings: HttpOnly, Secure (in prod), SameSite=Lax, Path=/
 
 ### B5. Login Flow
-- [ ] Create login page `/app/(auth)/login/page.tsx`
-- [ ] Build login form component (email, password inputs)
-- [ ] Create login server action `/app/(auth)/login/actions.ts`:
+- [x] Create login page `/app/(auth)/login/page.tsx`
+- [x] Build login form component (email, password inputs)
+- [x] Create login server action `/app/(auth)/login/actions.ts`:
   - Validate input (Zod schema)
   - Find user by email
   - Verify password
   - Create session
   - Set cookie
   - Redirect to `/items`
-- [ ] Handle errors: generic "Invalid credentials" message
-- [ ] Style login page (centered card, mobile-friendly)
+- [x] Handle errors: generic "Invalid credentials" message
+- [x] Style login page (centered card, mobile-friendly)
 
 ### B6. Logout
-- [ ] Create logout server action
-- [ ] Delete session from DB
-- [ ] Clear session cookie
-- [ ] Redirect to login page
-- [ ] Add logout button to app layout/settings
+- [x] Create logout server action
+- [x] Delete session from DB
+- [x] Clear session cookie
+- [x] Redirect to login page
+- [x] Add logout button to app layout/settings
 
 ### B7. Route Protection
-- [ ] Create auth middleware or layout-level check
-- [ ] Protect all `/(app)` routes - redirect to login if no valid session
-- [ ] Create `getCurrentUser()` helper for server components
-- [ ] Test: unauthenticated access redirects to login
+- [x] Create auth middleware or layout-level check
+- [x] Protect all `/(app)` routes - redirect to login if no valid session
+- [x] Create `getCurrentUser()` helper for server components
+- [x] Test: unauthenticated access redirects to login
 
 ### B8. User Seeding (No Public Signup)
-- [ ] Create seed script (`prisma/seed.ts`):
+- [x] Create seed script (`prisma/seed.ts`):
   - Create 2 users with hashed passwords
   - Passwords provided via environment variables or prompts
-- [ ] Add seed script to `package.json`
-- [ ] Document seed process in README
+- [x] Add seed script to `package.json`
+- [x] Document seed process in README
 - [ ] Alternative: invite code system (optional, can skip for v1)
 
 ### B9. Rate Limiting
-- [ ] Install rate limiter (`npm install rate-limiter-flexible` or similar)
-- [ ] Create rate limit middleware for login endpoint
-- [ ] Limit: e.g., 5 attempts per email per 15 minutes
-- [ ] Return 429 on exceeded limit
-- [ ] Log failed attempts (without passwords)
+- [x] Install rate limiter (`npm install rate-limiter-flexible` or similar)
+- [x] Create rate limit middleware for login endpoint
+- [x] Limit: e.g., 5 attempts per email per 15 minutes
+- [x] Return 429 on exceeded limit
+- [x] Log failed attempts (without passwords)
 
 ---
 
@@ -531,8 +531,8 @@ Before declaring v1 complete, verify:
 
 | Milestone | Status | Notes |
 |-----------|--------|-------|
-| A - Skeleton | Complete | Mobile viewport test remaining |
-| B - Auth | Not Started | |
+| A - Skeleton | Complete | All tasks done |
+| B - Auth | Complete | All tasks done |
 | C - Items CRUD | Not Started | |
 | D - Attachments | Not Started | |
 | E - Polish | Not Started | |
