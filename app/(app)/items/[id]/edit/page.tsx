@@ -1,13 +1,24 @@
+import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { getItem } from '@/lib/actions/items'
 import { ItemForm } from '@/components/items/item-form'
 
-export default function NewItemPage() {
+type Params = Promise<{ id: string }>
+
+export default async function EditItemPage({ params }: { params: Params }) {
+  const { id } = await params
+  const item = await getItem(id)
+
+  if (!item) {
+    notFound()
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
         <Link
-          href="/items"
+          href={`/items/${id}`}
           className="flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-foreground/5 active:bg-foreground/10"
         >
           <svg
@@ -25,10 +36,23 @@ export default function NewItemPage() {
             />
           </svg>
         </Link>
-        <h2 className="text-xl font-semibold">New Item</h2>
+        <h2 className="text-xl font-semibold">Edit Item</h2>
       </div>
 
-      <ItemForm mode="create" />
+      <ItemForm
+        mode="edit"
+        itemId={id}
+        defaultValues={{
+          title: item.title,
+          type: item.type,
+          description: item.description,
+          priority: item.priority,
+          tags: item.tags,
+          dueDate: item.dueDate,
+          pinned: item.pinned,
+          status: item.status,
+        }}
+      />
     </div>
   )
 }

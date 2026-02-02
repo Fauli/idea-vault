@@ -150,7 +150,7 @@ Check off items as completed. Follow the order of milestones for a logical build
 ## Milestone C — Items CRUD
 
 ### C1. Item Schema
-- [ ] Add `Item` model to Prisma schema:
+- [x] Add `Item` model to Prisma schema:
   - `id` (UUID)
   - `title` (String, not null)
   - `type` (Enum: IDEA, RECIPE, ACTIVITY, PROJECT, LOCATION)
@@ -163,18 +163,18 @@ Check off items as completed. Follow the order of milestones for a logical build
   - `createdBy` (FK to User)
   - `createdAt`
   - `updatedAt`
-- [ ] Add indexes: status, type, priority, updatedAt
-- [ ] Run migration (`npx prisma migrate dev --name add-items`)
+- [x] Add indexes: status, type, priority, updatedAt
+- [x] Run migration (`npx prisma migrate dev --name add-items`)
 
 ### C2. Validation Schemas
-- [ ] Install Zod (`npm install zod`)
-- [ ] Create `/lib/validations/item.ts`:
+- [x] Install Zod (`npm install zod`)
+- [x] Create `/lib/validations/item.ts`:
   - `createItemSchema`
   - `updateItemSchema`
-- [ ] Validate: title required (1-200 chars), type required, priority 0-3, tags array of strings
+- [x] Validate: title required (1-200 chars), type required, priority 0-3, tags array of strings
 
 ### C3. Item Server Actions
-- [ ] Create `/lib/actions/items.ts`:
+- [x] Create `/lib/actions/items.ts`:
   - `createItem(data)` - create and return new item
   - `getItem(id)` - fetch single item with auth check
   - `getItems(filters)` - fetch list with filters
@@ -183,46 +183,46 @@ Check off items as completed. Follow the order of milestones for a logical build
   - `markDone(id)` - set status to DONE
   - `restoreItem(id)` - set status back to ACTIVE
   - `deleteItem(id)` - hard delete (only for truly unwanted items)
-- [ ] All actions: validate user session, validate input
+- [x] All actions: validate user session, validate input
 
 ### C4. Items List Page
-- [ ] Create `/app/(app)/items/page.tsx`
-- [ ] Fetch items for current user (all users see same items per spec)
-- [ ] Display as card list (title, type badge, priority indicator, tags)
-- [ ] Show empty state when no items
-- [ ] Add floating "+" button for quick add
-- [ ] Default filter: status = ACTIVE
+- [x] Create `/app/(app)/items/page.tsx`
+- [x] Fetch items for current user (all users see same items per spec)
+- [x] Display as card list (title, type badge, priority indicator, tags)
+- [x] Show empty state when no items
+- [x] Add floating "+" button for quick add (via bottom nav)
+- [x] Default filter: status = ACTIVE
 
 ### C5. Item Detail Page
-- [ ] Create `/app/(app)/items/[id]/page.tsx`
-- [ ] Fetch item by ID
-- [ ] Display all fields (title, description, type, tags, priority, status, dates)
-- [ ] Add edit button → switches to edit mode or navigates to edit page
-- [ ] Add action buttons: Mark Done, Archive, Delete
-- [ ] Back button to list
+- [x] Create `/app/(app)/items/[id]/page.tsx`
+- [x] Fetch item by ID
+- [x] Display all fields (title, description, type, tags, priority, status, dates)
+- [x] Add edit button → switches to edit mode or navigates to edit page
+- [x] Add action buttons: Mark Done, Archive, Delete
+- [x] Back button to list
 
 ### C6. Create Item Page
-- [ ] Create `/app/(app)/items/new/page.tsx`
-- [ ] Build form: title (required), type (select), description (textarea)
-- [ ] Add priority selector (0-3 or Low/Med/High/Urgent)
-- [ ] Add tags input (comma-separated or chip input)
-- [ ] Add due date picker (optional)
-- [ ] Submit → create item → redirect to detail or list
-- [ ] Cancel button → back to list
+- [x] Create `/app/(app)/items/new/page.tsx`
+- [x] Build form: title (required), type (select), description (textarea)
+- [x] Add priority selector (0-3 or Low/Med/High/Urgent)
+- [x] Add tags input (comma-separated or chip input)
+- [x] Add due date picker (optional)
+- [x] Submit → create item → redirect to detail or list
+- [x] Cancel button → back to list
 
 ### C7. Edit Item
-- [ ] Create edit functionality (inline on detail page or separate route)
-- [ ] Pre-populate form with existing values
-- [ ] Submit → update item → show success feedback
+- [x] Create edit functionality (inline on detail page or separate route)
+- [x] Pre-populate form with existing values
+- [x] Submit → update item → show success feedback
 - [ ] Handle optimistic updates (optional, nice UX)
 
 ### C8. Item Components
-- [ ] `ItemCard` - compact card for list view
-- [ ] `ItemForm` - reusable form for create/edit
-- [ ] `TypeBadge` - colored badge for item type
-- [ ] `PriorityIndicator` - visual priority display
-- [ ] `TagChip` - styled tag display
-- [ ] `StatusBadge` - shows done/archived state
+- [x] `ItemCard` - compact card for list view
+- [x] `ItemForm` - reusable form for create/edit
+- [x] `TypeBadge` - colored badge for item type
+- [x] `PriorityIndicator` - visual priority display
+- [x] `TagChip` - styled tag display
+- [x] `StatusBadge` - shows done/archived state
 
 ---
 
@@ -533,7 +533,7 @@ Before declaring v1 complete, verify:
 |-----------|--------|-------|
 | A - Skeleton | Complete | All tasks done |
 | B - Auth | Complete | All tasks done |
-| C - Items CRUD | Not Started | |
+| C - Items CRUD | Complete | All tasks done |
 | D - Attachments | Not Started | |
 | E - Polish | Not Started | |
 | F - Deploy | Not Started | |

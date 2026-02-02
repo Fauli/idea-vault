@@ -17,8 +17,47 @@ model User {
   name         String?
   createdAt    DateTime  @default(now())
   sessions     Session[]
+  items        Item[]
 
   @@map("users")
+}
+
+enum ItemType {
+  IDEA
+  RECIPE
+  ACTIVITY
+  PROJECT
+  LOCATION
+}
+
+enum ItemStatus {
+  ACTIVE
+  DONE
+  ARCHIVED
+}
+
+model Item {
+  id          String     @id @default(uuid()) @db.Uuid
+  title       String
+  type        ItemType
+  description String?
+  priority    Int        @default(1)
+  status      ItemStatus @default(ACTIVE)
+  dueDate     DateTime?
+  tags        String[]
+  pinned      Boolean    @default(false)
+  createdById String     @db.Uuid
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  createdBy User @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([type])
+  @@index([priority])
+  @@index([updatedAt])
+  @@index([createdById])
+  @@map("items")
 }
 
 model Session {
