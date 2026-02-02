@@ -8,16 +8,16 @@ Check off items as completed. Follow the order of milestones for a logical build
 ## Milestone A — Project Skeleton
 
 ### A1. Repository & Tooling Setup
-- [ ] Initialize git repository
-- [ ] Create `.gitignore` (node_modules, .env*, .next, postgres data, uploads)
-- [ ] Initialize Next.js project with App Router (`npx create-next-app@latest --typescript --tailwind --eslint --app`)
-- [ ] Configure TypeScript (`tsconfig.json` - strict mode)
-- [ ] Set up ESLint + Prettier with consistent config
-- [ ] Create `.env.example` with required environment variables
-- [ ] Add `README.md` with local development instructions
+- [x] Initialize git repository
+- [x] Create `.gitignore` (node_modules, .env*, .next, postgres data, uploads)
+- [x] Initialize Next.js project with App Router (`npx create-next-app@latest --typescript --tailwind --eslint --app`)
+- [x] Configure TypeScript (`tsconfig.json` - strict mode)
+- [x] Set up ESLint + Prettier with consistent config
+- [x] Create `.env.example` with required environment variables
+- [x] Add `README.md` with local development instructions
 
 ### A2. Project Structure
-- [ ] Create folder structure:
+- [x] Create folder structure:
   ```
   /app
     /(auth)/login/page.tsx
@@ -27,7 +27,7 @@ Check off items as completed. Follow the order of milestones for a logical build
     /(app)/items/new/page.tsx
   /lib
     db.ts
-    auth.ts
+    auth.ts (deferred to Milestone B)
     utils.ts
   /components
     /ui (buttons, inputs, cards)
@@ -35,30 +35,30 @@ Check off items as completed. Follow the order of milestones for a logical build
   /prisma
     schema.prisma
   ```
-- [ ] Set up path aliases in `tsconfig.json` (`@/lib`, `@/components`, etc.)
+- [x] Set up path aliases in `tsconfig.json` (`@/lib`, `@/components`, etc.)
 
 ### A3. Database Setup
-- [ ] Install Prisma (`npm install prisma @prisma/client`)
-- [ ] Initialize Prisma with PostgreSQL (`npx prisma init`)
-- [ ] Configure `DATABASE_URL` in `.env`
-- [ ] Create initial Prisma schema (empty, just datasource + generator)
-- [ ] Verify Prisma connection to local Postgres
+- [x] Install Prisma (`npm install prisma @prisma/client`)
+- [x] Initialize Prisma with PostgreSQL (`npx prisma init`)
+- [x] Configure `DATABASE_URL` in `.env`
+- [x] Create initial Prisma schema (empty, just datasource + generator)
+- [x] Verify Prisma connection to local Postgres (requires running DB)
 
 ### A4. Base Layout & Navigation
-- [ ] Create root layout with Tailwind base styles
-- [ ] Design mobile-first shell layout (header, main content area, bottom nav)
-- [ ] Create bottom navigation component (Home, Add, Settings icons)
-- [ ] Add viewport meta tags for mobile (no zoom, theme-color)
+- [x] Create root layout with Tailwind base styles
+- [x] Design mobile-first shell layout (header, main content area, bottom nav)
+- [x] Create bottom navigation component (Home, Add, Settings icons)
+- [x] Add viewport meta tags for mobile (no zoom, theme-color)
 - [ ] Test layout on mobile viewport (375px width)
 
 ### A5. Docker Development Environment
-- [ ] Create `Dockerfile` for Next.js app (multi-stage build)
-- [ ] Create `docker-compose.yml` for local development:
+- [x] Create `Dockerfile` for Next.js app (multi-stage build)
+- [x] Create `docker-compose.yml` for local development:
   - `app` service (Next.js)
-  - `db` service (PostgreSQL 15+ with volume)
+  - `db` service (PostgreSQL 16+ with volume)
 - [ ] Create `docker-compose.override.yml` for dev-specific settings (hot reload)
-- [ ] Add `.dockerignore`
-- [ ] Test `docker-compose up` runs app + database
+- [x] Add `.dockerignore`
+- [x] Test `docker-compose up` runs app + database
 
 ---
 
@@ -531,7 +531,7 @@ Before declaring v1 complete, verify:
 
 | Milestone | Status | Notes |
 |-----------|--------|-------|
-| A - Skeleton | Not Started | |
+| A - Skeleton | Complete | Mobile viewport test remaining |
 | B - Auth | Not Started | |
 | C - Items CRUD | Not Started | |
 | D - Attachments | Not Started | |

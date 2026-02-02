@@ -1,7 +1,3 @@
-Here’s a **`CLAUDE.md`** you can drop next to `PLAN.md`.
-It’s written to work well with **AI-assisted development** (Claude / ChatGPT / local LLMs), keeps scope tight, and reflects all your constraints.
-
-```markdown
 # CLAUDE.md — Pocket Ideas (PWA)
 
 ## Purpose

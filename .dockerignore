@@ -1,0 +1,38 @@
+# Dependencies
+node_modules
+
+# Next.js build output
+.next
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Database volumes
+postgres-data
+
+# Environment files
+.env
+.env.local
+.env*.local
+
+# IDE
+.idea
+.vscode
+
+# Documentation
+*.md
+!README.md
+
+# Test files
+coverage
+*.test.*
+*.spec.*
+
+# Uploads (will be mounted as volume in production)
+uploads
