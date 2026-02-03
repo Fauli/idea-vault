@@ -1,13 +1,13 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { getItem } from '@/lib/actions/items'
+import { getItem, getAllTags } from '@/lib/actions/items'
 import { ItemForm } from '@/components/items/item-form'
 
 type Params = Promise<{ id: string }>
 
 export default async function EditItemPage({ params }: { params: Params }) {
   const { id } = await params
-  const item = await getItem(id)
+  const [item, tagSuggestions] = await Promise.all([getItem(id), getAllTags()])
 
   if (!item) {
     notFound()
@@ -42,6 +42,7 @@ export default async function EditItemPage({ params }: { params: Params }) {
       <ItemForm
         mode="edit"
         itemId={id}
+        tagSuggestions={tagSuggestions}
         defaultValues={{
           title: item.title,
           type: item.type,

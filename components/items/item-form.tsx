@@ -4,6 +4,7 @@ import { useTransition, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { TagInput } from '@/components/items/tag-input'
 import { createItem, updateItem } from '@/lib/actions/items'
 import { itemTypes } from '@/lib/validations/item'
 import type { ItemType, ItemStatus } from '@/app/generated/prisma/enums'
@@ -26,6 +27,7 @@ const priorityLabels = [
 type ItemFormProps = {
   mode: 'create' | 'edit'
   itemId?: string
+  tagSuggestions?: string[]
   defaultValues?: {
     title?: string
     type?: ItemType
@@ -38,7 +40,7 @@ type ItemFormProps = {
   }
 }
 
-export function ItemForm({ mode, itemId, defaultValues = {} }: ItemFormProps) {
+export function ItemForm({ mode, itemId, tagSuggestions = [], defaultValues = {} }: ItemFormProps) {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
@@ -48,7 +50,7 @@ export function ItemForm({ mode, itemId, defaultValues = {} }: ItemFormProps) {
   const [type, setType] = useState<ItemType>(defaultValues.type ?? 'IDEA')
   const [description, setDescription] = useState(defaultValues.description ?? '')
   const [priority, setPriority] = useState(defaultValues.priority ?? 1)
-  const [tagsInput, setTagsInput] = useState(defaultValues.tags?.join(', ') ?? '')
+  const [tags, setTags] = useState<string[]>(defaultValues.tags ?? [])
   const [dueDate, setDueDate] = useState(
     defaultValues.dueDate
       ? new Date(defaultValues.dueDate).toISOString().split('T')[0]
@@ -58,12 +60,6 @@ export function ItemForm({ mode, itemId, defaultValues = {} }: ItemFormProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
-
-    // Parse tags from comma-separated input
-    const tags = tagsInput
-      .split(',')
-      .map((t) => t.trim())
-      .filter((t) => t.length > 0)
 
     const data = {
       title: title.trim(),
@@ -178,19 +174,14 @@ export function ItemForm({ mode, itemId, defaultValues = {} }: ItemFormProps) {
 
       {/* Tags */}
       <div className="space-y-2">
-        <label htmlFor="tags" className="text-sm font-medium">
-          Tags
-        </label>
-        <Input
-          id="tags"
-          value={tagsInput}
-          onChange={(e) => setTagsInput(e.target.value)}
-          placeholder="cooking, weekend, fun (comma-separated)"
+        <label className="text-sm font-medium">Tags</label>
+        <TagInput
+          value={tags}
+          onChange={setTags}
+          suggestions={tagSuggestions}
           disabled={pending}
+          placeholder="Add tags..."
         />
-        <p className="text-xs text-foreground/50">
-          Separate tags with commas
-        </p>
       </div>
 
       {/* Due Date */}

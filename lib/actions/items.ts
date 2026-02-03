@@ -64,6 +64,12 @@ export async function getItem(id: string) {
       createdBy: {
         select: { id: true, name: true, email: true },
       },
+      links: {
+        orderBy: { createdAt: 'desc' },
+      },
+      images: {
+        orderBy: [{ sortOrder: 'asc' }, { createdAt: 'asc' }],
+      },
     },
   })
 
@@ -125,6 +131,14 @@ export async function getItems(
     include: {
       createdBy: {
         select: { id: true, name: true },
+      },
+      images: {
+        take: 1,
+        orderBy: [{ sortOrder: 'asc' }, { createdAt: 'asc' }],
+        select: { id: true, url: true },
+      },
+      _count: {
+        select: { images: true },
       },
     },
   })
@@ -242,4 +256,24 @@ export async function togglePinned(id: string) {
   revalidatePath('/items')
   revalidatePath(`/items/${id}`)
   return updated
+}
+
+/**
+ * Get all unique tags across all items
+ */
+export async function getAllTags(): Promise<string[]> {
+  await requireAuth()
+
+  const items = await prisma.item.findMany({
+    where: { status: { not: 'ARCHIVED' } },
+    select: { tags: true },
+  })
+
+  // Flatten and deduplicate tags
+  const allTags = items.flatMap((item) => item.tags)
+  const uniqueTags = [...new Set(allTags)].sort((a, b) =>
+    a.toLowerCase().localeCompare(b.toLowerCase())
+  )
+
+  return uniqueTags
 }

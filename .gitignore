@@ -50,6 +50,7 @@ postgres-data/
 
 # uploads
 /uploads
+/data/uploads
 
 # IDE
 .idea/

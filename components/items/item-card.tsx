@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { TypeBadge } from './type-badge'
 import { PriorityIndicator } from './priority-indicator'
@@ -15,6 +16,8 @@ type ItemCardProps = {
   tags: string[]
   pinned: boolean
   dueDate?: Date | null
+  thumbnail?: { id: string; url: string } | null
+  imageCount?: number
   className?: string
 }
 
@@ -28,6 +31,8 @@ export function ItemCard({
   tags,
   pinned,
   dueDate,
+  thumbnail,
+  imageCount = 0,
   className,
 }: ItemCardProps) {
   const isDone = status === 'DONE'
@@ -41,7 +46,38 @@ export function ItemCard({
         className
       )}
     >
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-start gap-3">
+        {/* Thumbnail */}
+        {thumbnail && (
+          <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-foreground/5">
+            <Image
+              src={thumbnail.url}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="64px"
+            />
+            {/* Image count badge */}
+            {imageCount > 1 && (
+              <div className="absolute bottom-1 right-1 flex items-center gap-0.5 rounded bg-black/60 px-1 py-0.5 text-xs text-white">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 16 16"
+                  fill="currentColor"
+                  className="h-3 w-3"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M2 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4Zm10.5 5.707a.5.5 0 0 0-.146-.353l-1-1a.5.5 0 0 0-.708 0L9.354 9.646a.5.5 0 0 1-.708 0L6.354 7.354a.5.5 0 0 0-.708 0l-2.5 2.5a.5.5 0 0 0-.146.353V11.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-1.793ZM12 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                {imageCount}
+              </div>
+            )}
+          </div>
+        )}
+
         <div className="min-w-0 flex-1">
           {/* Title row */}
           <div className="flex items-center gap-2">
@@ -76,7 +112,7 @@ export function ItemCard({
           {/* Tags */}
           {tags.length > 0 && (
             <div className="mt-2">
-              <TagList tags={tags} max={3} />
+              <TagList tags={tags} max={3} clickable={false} />
             </div>
           )}
         </div>

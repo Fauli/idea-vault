@@ -1,7 +1,10 @@
 import Link from 'next/link'
 import { ItemForm } from '@/components/items/item-form'
+import { getAllTags } from '@/lib/actions/items'
 
-export default function NewItemPage() {
+export default async function NewItemPage() {
+  const tagSuggestions = await getAllTags()
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -28,7 +31,7 @@ export default function NewItemPage() {
         <h2 className="text-xl font-semibold">New Item</h2>
       </div>
 
-      <ItemForm mode="create" />
+      <ItemForm mode="create" tagSuggestions={tagSuggestions} />
     </div>
   )
 }

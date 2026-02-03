@@ -229,31 +229,31 @@ Check off items as completed. Follow the order of milestones for a logical build
 ## Milestone D — Attachments
 
 ### D1. Links Schema
-- [ ] Add `ItemLink` model to Prisma schema:
+- [x] Add `ItemLink` model to Prisma schema:
   - `id` (UUID)
   - `itemId` (FK to Item, cascade delete)
   - `title` (String, optional)
   - `url` (String, not null)
   - `createdAt`
-- [ ] Add index on `itemId`
-- [ ] Run migration
+- [x] Add index on `itemId`
+- [x] Run migration
 
 ### D2. Links CRUD
-- [ ] Create server actions:
+- [x] Create server actions:
   - `addLink(itemId, title, url)`
   - `removeLink(linkId)`
-- [ ] Validate URL format (basic URL validation)
-- [ ] Update item's `updatedAt` when links change
+- [x] Validate URL format (basic URL validation)
+- [x] Update item's `updatedAt` when links change
 
 ### D3. Links UI
-- [ ] Add links section to item detail page
-- [ ] Display links as clickable list (opens in new tab)
-- [ ] Add "Add Link" button → modal or inline form
-- [ ] Add delete button per link (with confirmation)
-- [ ] Mobile-friendly tap targets
+- [x] Add links section to item detail page
+- [x] Display links as clickable list (opens in new tab)
+- [x] Add "Add Link" button → modal or inline form
+- [x] Add delete button per link (with confirmation)
+- [x] Mobile-friendly tap targets
 
 ### D4. Images Schema
-- [ ] Add `ItemImage` model to Prisma schema:
+- [x] Add `ItemImage` model to Prisma schema:
   - `id` (UUID)
   - `itemId` (FK to Item, cascade delete)
   - `storageKey` (String, not null) - S3 key or local path
@@ -262,9 +262,10 @@ Check off items as completed. Follow the order of milestones for a logical build
   - `byteSize` (Int)
   - `width` (Int, optional)
   - `height` (Int, optional)
+  - `sortOrder` (Int, default 0) - for reordering
   - `createdAt`
-- [ ] Add index on `itemId`
-- [ ] Run migration
+- [x] Add index on `itemId`
+- [x] Run migration
 
 ### D5. Image Storage Setup
 Choose one approach and implement:
@@ -278,44 +279,50 @@ Choose one approach and implement:
   - `getSignedUrl(key): Promise<string>` (if private bucket)
 - [ ] Configure env vars: `S3_ENDPOINT`, `S3_BUCKET`, `S3_ACCESS_KEY`, `S3_SECRET_KEY`
 
-#### Option B: Local Filesystem
-- [ ] Create uploads directory structure (`/data/uploads/images`)
-- [ ] Create `/lib/storage.ts`:
+#### Option B: Local Filesystem (Implemented)
+- [x] Create uploads directory structure (`/data/uploads/images`)
+- [x] Create `/lib/storage.ts`:
   - `uploadImage(file, key): Promise<string>`
   - `deleteImage(key): Promise<void>`
-- [ ] Configure Nginx to serve `/uploads` path
-- [ ] Add volume mount in docker-compose
+- [x] Create API route to serve uploads (`/api/uploads/[key]`)
+- [x] Add volume mount in docker-compose
 
 ### D6. Image Upload Endpoint
-- [ ] Create upload API route `/app/api/upload/route.ts`
-- [ ] Accept multipart form data
-- [ ] Validate:
+- [x] Create upload API route `/app/api/upload/route.ts`
+- [x] Accept multipart form data
+- [x] Validate:
   - File size ≤ 10 MB
   - MIME type: image/jpeg, image/png, image/webp only
   - User authenticated
-- [ ] Generate unique storage key (UUID + extension)
-- [ ] Upload to storage
-- [ ] Return image metadata (id, url)
+- [x] Generate unique storage key (UUID + extension)
+- [x] Upload to storage
+- [x] Return image metadata (id, url)
 
 ### D7. Image CRUD
-- [ ] Create server actions:
+- [x] Create server actions:
   - `addImage(itemId, imageData)` - save metadata after upload
   - `removeImage(imageId)` - delete from storage + DB
-- [ ] Update item's `updatedAt` when images change
+  - `reorderImages(itemId, imageIds)` - reorder images
+- [x] Update item's `updatedAt` when images change
 
 ### D8. Images UI
-- [ ] Add image gallery section to item detail page
-- [ ] Display images in responsive grid
-- [ ] Tap image → full-screen lightbox view
-- [ ] Add "Add Image" button → file picker or camera
-- [ ] Support camera capture on mobile (`accept="image/*" capture="environment"`)
-- [ ] Show upload progress indicator
-- [ ] Add delete button per image (with confirmation)
-- [ ] Handle upload errors gracefully
+- [x] Add image gallery section to item detail page
+- [x] Display images in responsive grid
+- [x] Tap image → full-screen lightbox view
+- [x] Add "Add Image" button → file picker or camera
+- [x] Support camera capture on mobile (`accept="image/*" capture="environment"`)
+- [x] Show upload progress indicator
+- [x] Add delete button per image (with confirmation)
+- [x] Handle upload errors gracefully
+- [x] Hero image for recipes/locations
+- [x] Swipe gestures in lightbox
+- [x] Pinch-to-zoom in lightbox
+- [x] Image count badge on item cards
+- [x] Tap to set as cover (reorder)
 
 ### D9. Attachment Cleanup
-- [ ] When item is deleted, cascade deletes links (automatic via FK)
-- [ ] When item is deleted, delete associated images from storage
+- [x] When item is deleted, cascade deletes links (automatic via FK)
+- [x] When item is deleted, delete associated images from storage (cascade via FK)
 - [ ] Create cleanup job for orphaned images (optional, safety net)
 
 ---
@@ -323,61 +330,61 @@ Choose one approach and implement:
 ## Milestone E — Filtering, Sorting & Polish
 
 ### E1. Search
-- [ ] Add search input to items list page
-- [ ] Search by title (case-insensitive, contains)
-- [ ] Search by description (optional, may be slower)
-- [ ] Debounce search input (300ms)
-- [ ] Show "No results" state
+- [x] Add search input to items list page
+- [x] Search by title (case-insensitive, contains)
+- [x] Search by description (optional, may be slower)
+- [x] Debounce search input (300ms)
+- [x] Show "No results" state
 
 ### E2. Tag Filtering
-- [ ] Collect all unique tags from items
-- [ ] Display tag filter chips above list
-- [ ] Allow multi-select tags (AND or OR logic - pick one)
-- [ ] Clear filters button
-- [ ] URL state for filters (shareable/bookmarkable)
+- [x] Collect all unique tags from items
+- [x] Display tag filter chips above list (clickable tags)
+- [x] Tags clickable to filter by tag
+- [x] Clear filters button
+- [x] URL state for filters (shareable/bookmarkable)
 
 ### E3. Type & Status Filters
-- [ ] Add type filter dropdown/chips (all 5 types)
-- [ ] Add status filter (Active, Done, Archived, All)
-- [ ] Default: Active status only
-- [ ] Combine filters (type AND status AND tags)
+- [x] Add type filter dropdown/chips (all 5 types)
+- [x] Add status filter (Active, Done, Archived tabs)
+- [x] Default: Active status only
+- [x] Combine filters (type AND status AND search)
 
 ### E4. Sorting
-- [ ] Add sort dropdown to list page
-- [ ] Sort options:
-  - Priority (high to low) - default
-  - Recently updated
+- [x] Add sort dropdown to list page
+- [x] Sort options:
+  - Priority (high to low)
+  - Recently updated (default)
   - Recently created
   - Due date (soonest first)
   - Alphabetical
-- [ ] Persist sort preference (localStorage or cookie)
+- [x] Persist sort preference in URL params
 
 ### E5. Tag Autocomplete
-- [ ] On create/edit form, suggest existing tags as user types
-- [ ] Show dropdown with matching tags
-- [ ] Allow creating new tags
-- [ ] Fetch tags list once and cache
+- [x] On create/edit form, suggest existing tags as user types
+- [x] Show dropdown with matching tags
+- [x] Allow creating new tags
+- [x] Fetch tags list on page load (server-side)
 
 ### E6. Quick Add Flow
-- [ ] Optimize "new item" for speed
-- [ ] Title field auto-focused
-- [ ] Type selector with large tap targets
+- [x] Optimize "new item" for speed
+- [x] Title field auto-focused
+- [x] Type selector with large tap targets
 - [ ] Optional: "Add & New" button to create and start another
 - [ ] Keyboard: Enter submits form
 
 ### E7. UI Polish
 - [ ] Review all touch targets (minimum 44x44px)
-- [ ] Add loading states (skeletons or spinners)
+- [x] Add loading states (skeletons or spinners)
 - [ ] Add success/error toast notifications
-- [ ] Improve empty states with helpful messages
+- [x] Improve empty states with helpful messages
 - [ ] Test dark mode (if supporting)
-- [ ] Ensure consistent spacing and typography
+- [x] Ensure consistent spacing and typography
 - [ ] Add pull-to-refresh on list (optional)
 
 ### E8. Pinned Items
-- [ ] Add pin/unpin action to items
-- [ ] Pinned items appear at top of list (regardless of sort)
-- [ ] Visual indicator for pinned items (pin icon)
+- [x] Add pin/unpin action to items
+- [x] Pinned items appear at top of list (regardless of sort)
+- [x] Visual indicator for pinned items (pin icon)
 
 ---
 
@@ -534,8 +541,8 @@ Before declaring v1 complete, verify:
 | A - Skeleton | Complete | All tasks done |
 | B - Auth | Complete | All tasks done |
 | C - Items CRUD | Complete | All tasks done |
-| D - Attachments | Not Started | |
-| E - Polish | Not Started | |
+| D - Attachments | Complete | Links + Images with full UX (lightbox, reorder, hero) |
+| E - Polish | In Progress | Search, filters, sorting done. Tag autocomplete + toasts remaining |
 | F - Deploy | Not Started | |
 
-Last updated: 2026-02-02
+Last updated: 2026-02-03

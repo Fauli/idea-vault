@@ -5,6 +5,10 @@ import { Button } from '@/components/ui/button'
 import { TypeBadge } from '@/components/items/type-badge'
 import { PriorityIndicator } from '@/components/items/priority-indicator'
 import { TagList } from '@/components/items/tag-chip'
+import { LinkList } from '@/components/items/link-list'
+import { AddLinkForm } from '@/components/items/add-link-form'
+import { ItemImages } from '@/components/items/item-images'
+import { ImageUpload } from '@/components/items/image-upload'
 import { ItemActions } from './item-actions'
 
 type Params = Promise<{ id: string }>
@@ -19,6 +23,7 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
 
   const isDone = item.status === 'DONE'
   const isArchived = item.status === 'ARCHIVED'
+  const showHeroImage = ['RECIPE', 'LOCATION'].includes(item.type) && item.images.length > 0
 
   return (
     <div className="space-y-6">
@@ -115,6 +120,20 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
           </p>
         </div>
       )}
+
+      {/* Images */}
+      <div className="space-y-3">
+        {!showHeroImage && <h2 className="text-sm font-medium text-foreground/70">Photos</h2>}
+        <ItemImages images={item.images} itemId={item.id} showHero={showHeroImage} />
+        <ImageUpload itemId={item.id} />
+      </div>
+
+      {/* Links */}
+      <div className="space-y-3">
+        <h2 className="text-sm font-medium text-foreground/70">Links</h2>
+        <LinkList links={item.links} />
+        <AddLinkForm itemId={item.id} />
+      </div>
 
       {/* Timestamps */}
       <div className="space-y-1 text-xs text-foreground/40">

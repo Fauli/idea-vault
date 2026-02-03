@@ -89,6 +89,8 @@ export default async function ItemsPage({ searchParams }: ItemsPageProps) {
               tags={item.tags}
               pinned={item.pinned}
               dueDate={item.dueDate}
+              thumbnail={item.images[0] ?? null}
+              imageCount={item._count.images}
             />
           ))}
         </div>
