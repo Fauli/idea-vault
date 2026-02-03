@@ -49,6 +49,7 @@ model Item {
   createdById String     @db.Uuid
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+  deletedAt   DateTime?
 
   createdBy User        @relation(fields: [createdById], references: [id], onDelete: Cascade)
   links     ItemLink[]
@@ -59,6 +60,7 @@ model Item {
   @@index([priority])
   @@index([updatedAt])
   @@index([createdById])
+  @@index([deletedAt])
   @@map("items")
 }
 

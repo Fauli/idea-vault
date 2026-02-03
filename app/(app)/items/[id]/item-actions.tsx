@@ -62,7 +62,7 @@ export function ItemActions({ id, status, pinned }: ItemActionsProps) {
     return (
       <div className="space-y-3 rounded-lg border border-red-500/20 bg-red-500/5 p-4">
         <p className="text-sm text-red-600">
-          Are you sure you want to permanently delete this item? This cannot be undone.
+          Move this item to trash? You can restore it within 30 days.
         </p>
         <div className="flex gap-2">
           <Button
@@ -79,7 +79,7 @@ export function ItemActions({ id, status, pinned }: ItemActionsProps) {
             disabled={pending}
             className="bg-red-600 hover:bg-red-700"
           >
-            {pending ? 'Deleting...' : 'Delete permanently'}
+            {pending ? 'Moving...' : 'Move to trash'}
           </Button>
         </div>
       </div>

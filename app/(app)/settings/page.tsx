@@ -1,4 +1,6 @@
+import Link from 'next/link'
 import { LogoutButton } from './logout-button'
+import { ExportButton } from './export-button'
 
 export default function SettingsPage() {
   return (
@@ -11,6 +13,42 @@ export default function SettingsPage() {
       </div>
 
       <div className="space-y-4">
+        <Link
+          href="/trash"
+          className="flex items-center justify-between rounded-lg border border-foreground/10 p-4 transition-colors hover:border-foreground/20"
+        >
+          <div>
+            <h3 className="font-medium">Trash</h3>
+            <p className="mt-1 text-sm text-foreground/60">
+              View and restore deleted items (30-day retention)
+            </p>
+          </div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="h-5 w-5 text-foreground/40"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="m8.25 4.5 7.5 7.5-7.5 7.5"
+            />
+          </svg>
+        </Link>
+
+        <div className="rounded-lg border border-foreground/10 p-4">
+          <h3 className="font-medium">Data</h3>
+          <p className="mt-1 text-sm text-foreground/60">
+            Export all your items as a JSON file for backup or migration.
+          </p>
+          <div className="mt-4">
+            <ExportButton />
+          </div>
+        </div>
+
         <div className="rounded-lg border border-foreground/10 p-4">
           <h3 className="font-medium">Account</h3>
           <p className="mt-1 text-sm text-foreground/60">

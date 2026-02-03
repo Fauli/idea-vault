@@ -1,6 +1,6 @@
 'use client'
 
-import { useTransition, useState, useEffect } from 'react'
+import { useTransition, useState, useEffect, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -45,6 +45,7 @@ export function ItemForm({ mode, itemId, tagSuggestions = [], defaultValues = {}
   const router = useRouter()
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
+  const [isSaved, setIsSaved] = useState(false)
 
   // Form state
   const [title, setTitle] = useState(defaultValues.title ?? '')
@@ -62,6 +63,43 @@ export function ItemForm({ mode, itemId, tagSuggestions = [], defaultValues = {}
   const hasAdvancedValues = (defaultValues.priority !== undefined && defaultValues.priority !== 1) || defaultValues.dueDate
   const [showMoreOptions, setShowMoreOptions] = useState(mode === 'edit' && hasAdvancedValues)
 
+  // Track if form has unsaved changes
+  const initialValues = useMemo(() => ({
+    title: defaultValues.title ?? '',
+    type: defaultValues.type ?? 'IDEA',
+    description: defaultValues.description ?? '',
+    priority: defaultValues.priority ?? 1,
+    tags: defaultValues.tags ?? [],
+    dueDate: defaultValues.dueDate
+      ? new Date(defaultValues.dueDate).toISOString().split('T')[0]
+      : '',
+  }), [defaultValues.title, defaultValues.type, defaultValues.description, defaultValues.priority, defaultValues.tags, defaultValues.dueDate])
+
+  const hasUnsavedChanges = useCallback(() => {
+    if (isSaved) return false
+    return (
+      title !== initialValues.title ||
+      type !== initialValues.type ||
+      description !== initialValues.description ||
+      priority !== initialValues.priority ||
+      JSON.stringify(tags) !== JSON.stringify(initialValues.tags) ||
+      dueDate !== initialValues.dueDate
+    )
+  }, [title, type, description, priority, tags, dueDate, initialValues, isSaved])
+
+  // Warn on browser navigation (refresh, close tab)
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges()) {
+        e.preventDefault()
+        e.returnValue = ''
+      }
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [hasUnsavedChanges])
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
@@ -78,6 +116,7 @@ export function ItemForm({ mode, itemId, tagSuggestions = [], defaultValues = {}
 
     startTransition(async () => {
       try {
+        setIsSaved(true) // Mark as saved before navigation
         if (mode === 'create') {
           const item = await createItem(data)
           router.push(`/items/${item.id}?created=true`)
@@ -86,6 +125,7 @@ export function ItemForm({ mode, itemId, tagSuggestions = [], defaultValues = {}
           router.push(`/items/${itemId}?updated=true`)
         }
       } catch (err) {
+        setIsSaved(false) // Reset if save failed
         setError(err instanceof Error ? err.message : 'Something went wrong')
       }
     })
@@ -235,7 +275,16 @@ export function ItemForm({ mode, itemId, tagSuggestions = [], defaultValues = {}
           type="button"
           variant="secondary"
           className="flex-1"
-          onClick={() => router.back()}
+          onClick={() => {
+            if (hasUnsavedChanges()) {
+              if (window.confirm('You have unsaved changes. Are you sure you want to leave?')) {
+                setIsSaved(true) // Prevent beforeunload from triggering
+                router.back()
+              }
+            } else {
+              router.back()
+            }
+          }}
           disabled={pending}
         >
           Cancel

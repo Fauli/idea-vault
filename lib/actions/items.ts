@@ -55,7 +55,7 @@ export async function createItem(input: CreateItemInput) {
 /**
  * Get a single item by ID
  */
-export async function getItem(id: string) {
+export async function getItem(id: string, includeDeleted = false) {
   await requireAuth()
 
   const item = await prisma.item.findUnique({
@@ -73,6 +73,11 @@ export async function getItem(id: string) {
     },
   })
 
+  // Return null if item is deleted and includeDeleted is false
+  if (item && item.deletedAt && !includeDeleted) {
+    return null
+  }
+
   return item
 }
 
@@ -86,7 +91,10 @@ export async function getItems(
   await requireAuth()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const where: any = {}
+  const where: any = {
+    // Always exclude deleted items from normal queries
+    deletedAt: null,
+  }
 
   // Status filter (default to ACTIVE, but allow fetching all if explicitly undefined)
   if (filters.status !== undefined) {
@@ -221,16 +229,87 @@ export async function restoreItem(id: string) {
 }
 
 /**
- * Permanently delete an item
+ * Soft delete an item (move to trash)
  */
 export async function deleteItem(id: string) {
+  await requireAuth()
+
+  await prisma.item.update({
+    where: { id },
+    data: { deletedAt: new Date() },
+  })
+
+  revalidatePath('/items')
+  revalidatePath('/trash')
+}
+
+/**
+ * Permanently delete an item from trash
+ */
+export async function permanentlyDeleteItem(id: string) {
   await requireAuth()
 
   await prisma.item.delete({
     where: { id },
   })
 
+  revalidatePath('/trash')
+}
+
+/**
+ * Restore an item from trash
+ */
+export async function restoreFromTrash(id: string) {
+  await requireAuth()
+
+  await prisma.item.update({
+    where: { id },
+    data: { deletedAt: null },
+  })
+
   revalidatePath('/items')
+  revalidatePath('/trash')
+}
+
+/**
+ * Get items in trash (deleted within last 30 days)
+ */
+export async function getTrashItems() {
+  await requireAuth()
+
+  const items = await prisma.item.findMany({
+    where: {
+      deletedAt: { not: null },
+    },
+    orderBy: { deletedAt: 'desc' },
+    include: {
+      createdBy: {
+        select: { id: true, name: true },
+      },
+      images: {
+        take: 1,
+        orderBy: [{ sortOrder: 'asc' }, { createdAt: 'asc' }],
+        select: { id: true, url: true },
+      },
+    },
+  })
+
+  return items
+}
+
+/**
+ * Permanently delete all items in trash
+ */
+export async function emptyTrash() {
+  await requireAuth()
+
+  await prisma.item.deleteMany({
+    where: {
+      deletedAt: { not: null },
+    },
+  })
+
+  revalidatePath('/trash')
 }
 
 /**
@@ -265,7 +344,10 @@ export async function getAllTags(): Promise<string[]> {
   await requireAuth()
 
   const items = await prisma.item.findMany({
-    where: { status: { not: 'ARCHIVED' } },
+    where: {
+      status: { not: 'ARCHIVED' },
+      deletedAt: null,
+    },
     select: { tags: true },
   })
 
