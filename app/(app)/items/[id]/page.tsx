@@ -10,6 +10,7 @@ import { AddLinkForm } from '@/components/items/add-link-form'
 import { ItemImages } from '@/components/items/item-images'
 import { ImageUpload } from '@/components/items/image-upload'
 import { ItemActions } from './item-actions'
+import { SuccessToast } from '@/components/items/success-toast'
 
 type Params = Promise<{ id: string }>
 
@@ -27,6 +28,7 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
 
   return (
     <div className="space-y-6">
+      <SuccessToast />
       {/* Header with back button */}
       <div className="flex items-center gap-3">
         <Link

@@ -46,7 +46,10 @@ export default async function ItemsPage({ searchParams }: ItemsPageProps) {
     filters.type = params.type as ItemType
   }
 
-  if (params.status && ['ACTIVE', 'DONE', 'ARCHIVED'].includes(params.status)) {
+  if (params.status === 'ALL') {
+    // Show all items regardless of status
+    filters.status = undefined
+  } else if (params.status && ['ACTIVE', 'DONE', 'ARCHIVED'].includes(params.status)) {
     filters.status = params.status as ItemStatus
   }
 

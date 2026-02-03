@@ -41,7 +41,7 @@ export function ItemCard({
     <Link
       href={`/items/${id}`}
       className={cn(
-        'block rounded-lg border border-foreground/10 p-4 transition-all active:scale-[0.98] active:bg-foreground/5',
+        'block rounded-lg border border-foreground/10 p-4 transition-all hover:shadow-sm active:scale-[0.98] active:bg-foreground/5',
         isDone && 'opacity-60',
         className
       )}

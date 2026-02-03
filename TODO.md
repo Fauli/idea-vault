@@ -346,6 +346,7 @@ Choose one approach and implement:
 ### E3. Type & Status Filters
 - [x] Add type filter dropdown/chips (all 5 types)
 - [x] Add status filter (Active, Done, Archived tabs)
+- [x] Add "All" status tab to see everything
 - [x] Default: Active status only
 - [x] Combine filters (type AND status AND search)
 
@@ -375,11 +376,12 @@ Choose one approach and implement:
 ### E7. UI Polish
 - [ ] Review all touch targets (minimum 44x44px)
 - [x] Add loading states (skeletons or spinners)
-- [ ] Add success/error toast notifications
+- [x] Add success/error toast notifications
 - [x] Improve empty states with helpful messages
 - [ ] Test dark mode (if supporting)
 - [x] Ensure consistent spacing and typography
 - [ ] Add pull-to-refresh on list (optional)
+- [x] Collapsible "More options" in item form (Priority/Due Date)
 
 ### E8. Pinned Items
 - [x] Add pin/unpin action to items

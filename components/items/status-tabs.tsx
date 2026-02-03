@@ -5,7 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import type { ItemStatus } from '@/app/generated/prisma/enums'
 
-const statusOptions: { value: ItemStatus; label: string }[] = [
+const statusOptions: { value: ItemStatus | 'ALL'; label: string }[] = [
+  { value: 'ALL', label: 'All' },
   { value: 'ACTIVE', label: 'Active' },
   { value: 'DONE', label: 'Done' },
   { value: 'ARCHIVED', label: 'Archived' },
@@ -20,14 +21,17 @@ export function StatusTabs({ className }: StatusTabsProps) {
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
 
-  const currentStatus = (searchParams.get('status') as ItemStatus) ?? 'ACTIVE'
+  const statusParam = searchParams.get('status')
+  const currentStatus = statusParam === 'ALL' ? 'ALL' : (statusParam as ItemStatus) ?? 'ACTIVE'
 
   const handleSelect = useCallback(
-    (status: ItemStatus) => {
+    (status: ItemStatus | 'ALL') => {
       const params = new URLSearchParams(searchParams.toString())
       if (status === 'ACTIVE') {
         // ACTIVE is default, remove from URL
         params.delete('status')
+      } else if (status === 'ALL') {
+        params.set('status', 'ALL')
       } else {
         params.set('status', status)
       }

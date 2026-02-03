@@ -13,27 +13,27 @@ const typeOptions: { value: ItemType | null; label: string; className: string }[
   },
   {
     value: 'IDEA',
-    label: 'Idea',
+    label: '💡 Idea',
     className: 'bg-yellow-500/10 text-yellow-700',
   },
   {
     value: 'RECIPE',
-    label: 'Recipe',
+    label: '🍳 Recipe',
     className: 'bg-orange-500/10 text-orange-700',
   },
   {
     value: 'ACTIVITY',
-    label: 'Activity',
+    label: '🎯 Activity',
     className: 'bg-green-500/10 text-green-700',
   },
   {
     value: 'PROJECT',
-    label: 'Project',
+    label: '📋 Project',
     className: 'bg-blue-500/10 text-blue-700',
   },
   {
     value: 'LOCATION',
-    label: 'Location',
+    label: '📍 Location',
     className: 'bg-purple-500/10 text-purple-700',
   },
 ]

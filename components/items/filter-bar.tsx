@@ -31,7 +31,7 @@ function FilterBarContent({ itemCount, activeTag, className }: FilterBarProps) {
 
       {/* Count + Sort */}
       <div className="flex items-center justify-between">
-        <span className="text-sm text-foreground/50">
+        <span className="text-sm text-foreground/60">
           {itemCount} item{itemCount !== 1 ? 's' : ''}
         </span>
         <SortSelect />

@@ -1,20 +1,21 @@
 'use client'
 
-import { useTransition, useState } from 'react'
+import { useTransition, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { TagInput } from '@/components/items/tag-input'
 import { createItem, updateItem } from '@/lib/actions/items'
 import { itemTypes } from '@/lib/validations/item'
+import { cn } from '@/lib/utils'
 import type { ItemType, ItemStatus } from '@/app/generated/prisma/enums'
 
 const typeLabels: Record<ItemType, string> = {
-  IDEA: 'Idea',
-  RECIPE: 'Recipe',
-  ACTIVITY: 'Activity',
-  PROJECT: 'Project',
-  LOCATION: 'Location',
+  IDEA: '💡 Idea',
+  RECIPE: '🍳 Recipe',
+  ACTIVITY: '🎯 Activity',
+  PROJECT: '📋 Project',
+  LOCATION: '📍 Location',
 }
 
 const priorityLabels = [
@@ -57,6 +58,10 @@ export function ItemForm({ mode, itemId, tagSuggestions = [], defaultValues = {}
       : ''
   )
 
+  // Show more options if editing with non-default values, otherwise collapsed
+  const hasAdvancedValues = (defaultValues.priority !== undefined && defaultValues.priority !== 1) || defaultValues.dueDate
+  const [showMoreOptions, setShowMoreOptions] = useState(mode === 'edit' && hasAdvancedValues)
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
@@ -75,10 +80,10 @@ export function ItemForm({ mode, itemId, tagSuggestions = [], defaultValues = {}
       try {
         if (mode === 'create') {
           const item = await createItem(data)
-          router.push(`/items/${item.id}`)
+          router.push(`/items/${item.id}?created=true`)
         } else if (itemId) {
           await updateItem(itemId, data)
-          router.push(`/items/${itemId}`)
+          router.push(`/items/${itemId}?updated=true`)
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Something went wrong')
@@ -134,28 +139,6 @@ export function ItemForm({ mode, itemId, tagSuggestions = [], defaultValues = {}
         </div>
       </div>
 
-      {/* Priority */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium">Priority</label>
-        <div className="grid grid-cols-4 gap-2">
-          {priorityLabels.map((p) => (
-            <button
-              key={p.value}
-              type="button"
-              onClick={() => setPriority(p.value)}
-              disabled={pending}
-              className={`rounded-lg border px-3 py-2 text-sm transition-colors ${
-                priority === p.value
-                  ? 'border-foreground bg-foreground text-background'
-                  : 'border-foreground/20 hover:border-foreground/40'
-              }`}
-            >
-              {p.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* Description */}
       <div className="space-y-2">
         <label htmlFor="description" className="text-sm font-medium">
@@ -184,19 +167,67 @@ export function ItemForm({ mode, itemId, tagSuggestions = [], defaultValues = {}
         />
       </div>
 
-      {/* Due Date */}
-      <div className="space-y-2">
-        <label htmlFor="dueDate" className="text-sm font-medium">
-          Due Date
-        </label>
-        <Input
-          id="dueDate"
-          type="date"
-          value={dueDate}
-          onChange={(e) => setDueDate(e.target.value)}
-          disabled={pending}
-        />
-      </div>
+      {/* More Options Toggle */}
+      <button
+        type="button"
+        onClick={() => setShowMoreOptions(!showMoreOptions)}
+        className="flex w-full items-center justify-between rounded-lg border border-foreground/10 px-4 py-3 text-sm text-foreground/70 transition-colors hover:border-foreground/20 hover:text-foreground"
+      >
+        <span>More options</span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          className={cn('h-5 w-5 transition-transform', showMoreOptions && 'rotate-180')}
+        >
+          <path
+            fillRule="evenodd"
+            d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+            clipRule="evenodd"
+          />
+        </svg>
+      </button>
+
+      {/* Collapsible: Priority & Due Date */}
+      {showMoreOptions && (
+        <div className="space-y-4 rounded-lg border border-foreground/10 p-4">
+          {/* Priority */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Priority</label>
+            <div className="grid grid-cols-4 gap-2">
+              {priorityLabels.map((p) => (
+                <button
+                  key={p.value}
+                  type="button"
+                  onClick={() => setPriority(p.value)}
+                  disabled={pending}
+                  className={`rounded-lg border px-3 py-2 text-sm transition-colors ${
+                    priority === p.value
+                      ? 'border-foreground bg-foreground text-background'
+                      : 'border-foreground/20 hover:border-foreground/40'
+                  }`}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Due Date */}
+          <div className="space-y-2">
+            <label htmlFor="dueDate" className="text-sm font-medium">
+              Due Date
+            </label>
+            <Input
+              id="dueDate"
+              type="date"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+              disabled={pending}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Actions */}
       <div className="flex gap-3 pt-2">
