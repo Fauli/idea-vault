@@ -154,13 +154,40 @@ export async function getItems(
   return items
 }
 
+export type UpdateItemResult =
+  | { success: true; item: Awaited<ReturnType<typeof prisma.item.update>> }
+  | { success: false; conflict: true; currentVersion: number }
+
 /**
- * Update an item
+ * Update an item with optimistic locking
+ * @param id - Item ID
+ * @param input - Update data
+ * @param expectedVersion - Expected version for conflict detection (optional)
  */
-export async function updateItem(id: string, input: UpdateItemInput) {
+export async function updateItem(
+  id: string,
+  input: UpdateItemInput,
+  expectedVersion?: number
+): Promise<UpdateItemResult> {
   await requireAuth()
 
   const validated = updateItemSchema.parse(input)
+
+  // Check version if provided
+  if (expectedVersion !== undefined) {
+    const current = await prisma.item.findUnique({
+      where: { id },
+      select: { version: true },
+    })
+
+    if (current && current.version !== expectedVersion) {
+      return {
+        success: false,
+        conflict: true,
+        currentVersion: current.version,
+      }
+    }
+  }
 
   // Remove undefined values
   const data: Record<string, unknown> = {}
@@ -172,12 +199,15 @@ export async function updateItem(id: string, input: UpdateItemInput) {
 
   const item = await prisma.item.update({
     where: { id },
-    data,
+    data: {
+      ...data,
+      version: { increment: 1 },
+    },
   })
 
   revalidatePath('/items')
   revalidatePath(`/items/${id}`)
-  return item
+  return { success: true, item }
 }
 
 /**

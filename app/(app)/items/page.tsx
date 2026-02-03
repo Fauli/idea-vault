@@ -1,7 +1,7 @@
-import { getItems, type ItemFilters, type ItemSort } from '@/lib/actions/items'
-import { ItemCard } from '@/components/items/item-card'
-import { EmptyState } from '@/components/items/empty-state'
-import { EmptyFilteredState } from '@/components/items/empty-filtered-state'
+import { Suspense } from 'react'
+import { type ItemFilters, type ItemSort } from '@/lib/actions/items'
+import { ItemList } from '@/components/items/item-list'
+import { ItemListSkeleton } from '@/components/items/item-card-skeleton'
 import { FilterBar } from '@/components/items/filter-bar'
 import type { ItemType, ItemStatus } from '@/app/generated/prisma/enums'
 
@@ -58,46 +58,22 @@ export default async function ItemsPage({ searchParams }: ItemsPageProps) {
   }
 
   const sort = getSortFromParam(params.sort)
-  const items = await getItems(filters, sort)
 
   // Check if any filters are applied (beyond default status)
   const hasFilters = !!(params.q || params.type || params.sort || params.tag)
 
-  // If no items exist at all (first time user), show the empty state
-  if (items.length === 0 && !hasFilters && !params.status) {
-    // Check if there are any items at all
-    const allItems = await getItems({ status: undefined })
-    if (allItems.length === 0) {
-      return <EmptyState />
-    }
-  }
-
   return (
     <div className="space-y-4">
-      <FilterBar itemCount={items.length} activeTag={params.tag} />
+      <FilterBar activeTag={params.tag} />
 
-      {items.length === 0 ? (
-        <EmptyFilteredState hasFilters={hasFilters || !!params.status} />
-      ) : (
-        <div className="space-y-3">
-          {items.map((item) => (
-            <ItemCard
-              key={item.id}
-              id={item.id}
-              title={item.title}
-              type={item.type}
-              description={item.description}
-              priority={item.priority}
-              status={item.status}
-              tags={item.tags}
-              pinned={item.pinned}
-              dueDate={item.dueDate}
-              thumbnail={item.images[0] ?? null}
-              imageCount={item._count.images}
-            />
-          ))}
-        </div>
-      )}
+      <Suspense fallback={<ItemListSkeleton count={5} />}>
+        <ItemList
+          filters={filters}
+          sort={sort}
+          hasFilters={hasFilters}
+          activeStatus={params.status}
+        />
+      </Suspense>
     </div>
   )
 }

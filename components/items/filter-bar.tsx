@@ -9,12 +9,11 @@ import { ActiveTagFilter } from './active-tag-filter'
 import { cn } from '@/lib/utils'
 
 type FilterBarProps = {
-  itemCount: number
   activeTag?: string
   className?: string
 }
 
-function FilterBarContent({ itemCount, activeTag, className }: FilterBarProps) {
+function FilterBarContent({ activeTag, className }: FilterBarProps) {
   return (
     <div className={cn('space-y-3', className)}>
       {/* Search */}
@@ -29,11 +28,8 @@ function FilterBarContent({ itemCount, activeTag, className }: FilterBarProps) {
       {/* Status tabs */}
       <StatusTabs />
 
-      {/* Count + Sort */}
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-foreground/60">
-          {itemCount} item{itemCount !== 1 ? 's' : ''}
-        </span>
+      {/* Sort */}
+      <div className="flex items-center justify-end">
         <SortSelect />
       </div>
     </div>
@@ -58,9 +54,8 @@ export function FilterBar(props: FilterBarProps) {
           </div>
           {/* Status tabs skeleton */}
           <div className="h-12 animate-pulse rounded-lg bg-foreground/5" />
-          {/* Count + sort skeleton */}
-          <div className="flex items-center justify-between">
-            <div className="h-5 w-16 animate-pulse rounded bg-foreground/5" />
+          {/* Sort skeleton */}
+          <div className="flex items-center justify-end">
             <div className="h-10 w-24 animate-pulse rounded-lg bg-foreground/5" />
           </div>
         </div>

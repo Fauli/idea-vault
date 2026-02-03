@@ -43,6 +43,7 @@ export default async function EditItemPage({ params }: { params: Params }) {
         mode="edit"
         itemId={id}
         tagSuggestions={tagSuggestions}
+        version={item.version}
         defaultValues={{
           title: item.title,
           type: item.type,
