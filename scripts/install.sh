@@ -5,7 +5,7 @@ set -e
 # Pocket Ideas - Server Installation Script
 #
 # Run on a fresh Ubuntu/Debian VM:
-#   curl -fsSL https://raw.githubusercontent.com/YOUR_USER/idea-vault/main/scripts/install.sh | bash -s -- your-domain.com
+#   curl -fsSL https://raw.githubusercontent.com/Fauli/idea-vault/main/scripts/install.sh | bash -s -- your-domain.com
 #
 # Or download and run:
 #   chmod +x install.sh
@@ -14,7 +14,7 @@ set -e
 
 DOMAIN="${1:-}"
 APP_DIR="/opt/idea-vault"
-REPO_URL="https://github.com/YOUR_USER/idea-vault.git"  # UPDATE THIS
+REPO_URL="https://github.com/Fauli/idea-vault.git"
 
 # Colors for output
 RED='\033[0;31m'
@@ -53,9 +53,15 @@ else
     warn "Added $USER to docker group. You may need to log out and back in."
 fi
 
-# Ensure docker is running
-sudo systemctl enable docker
-sudo systemctl start docker
+# Ensure docker is running (handle both apt and snap installs)
+if systemctl list-unit-files docker.service &> /dev/null; then
+    sudo systemctl enable docker
+    sudo systemctl start docker
+elif snap list docker &> /dev/null; then
+    log "Docker installed via snap (note: may have permission issues with /opt)"
+else
+    warn "Could not detect docker service"
+fi
 
 #############################################
 # Clone or update repository
@@ -70,6 +76,16 @@ else
     sudo git clone "$REPO_URL" "$APP_DIR"
     sudo chown -R "$USER:$USER" "$APP_DIR"
     cd "$APP_DIR"
+fi
+
+#############################################
+# Handle dev override file (must be before creating prod override)
+#############################################
+
+DEV_OVERRIDE="$APP_DIR/docker-compose.override.yml"
+if [ -f "$DEV_OVERRIDE" ] && grep -q "pnpm\|target: base" "$DEV_OVERRIDE"; then
+    log "Moving dev override file aside for production..."
+    mv "$DEV_OVERRIDE" "$DEV_OVERRIDE.dev"
 fi
 
 #############################################
@@ -130,21 +146,28 @@ fi
 log "Building and starting containers..."
 cd "$APP_DIR"
 
-# Use newgrp to get docker permissions in current shell if needed
+# Determine docker command (with or without sudo)
+DOCKER_CMD="docker"
 if ! docker info &> /dev/null; then
-    warn "Docker permission issue. Trying with sudo..."
-    sudo docker compose pull
-    sudo docker compose build
-    sudo docker compose up -d
-    sleep 5
-    sudo docker compose exec app npx prisma migrate deploy
-else
-    docker compose pull
-    docker compose build
-    docker compose up -d
-    sleep 5
-    docker compose exec app npx prisma migrate deploy
+    warn "Docker permission issue. Using sudo..."
+    DOCKER_CMD="sudo docker"
 fi
+
+$DOCKER_CMD compose pull
+$DOCKER_CMD compose build
+$DOCKER_CMD compose up -d
+
+# Wait for DB to be healthy
+log "Waiting for database to be ready..."
+sleep 8
+
+#############################################
+# Run database migrations
+#############################################
+
+log "Running database migrations..."
+# Use docker compose run with entrypoint override to avoid prisma.config.ts issues
+$DOCKER_CMD compose run --rm --entrypoint "" app sh -c "npx prisma migrate deploy --schema=./prisma/schema.prisma"
 
 log "Application running on port 3000"
 
