@@ -11,6 +11,9 @@ const nextConfig: NextConfig = {
   output: 'standalone',
   // Empty turbopack config to silence the warning - serwist uses webpack
   turbopack: {},
+  images: {
+    remotePatterns: [{ protocol: 'https', hostname: '**' }],
+  },
 }
 
 export default withSerwist(nextConfig)

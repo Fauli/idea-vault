@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { LogoutButton } from './logout-button'
 import { ExportButton } from './export-button'
+import { ThemeToggle } from './theme-toggle'
 
 export default function SettingsPage() {
   return (
@@ -13,6 +14,16 @@ export default function SettingsPage() {
       </div>
 
       <div className="space-y-4">
+        <div className="rounded-lg border border-foreground/10 p-4">
+          <h3 className="font-medium">Appearance</h3>
+          <p className="mt-1 text-sm text-foreground/60">
+            Choose your preferred color scheme.
+          </p>
+          <div className="mt-4">
+            <ThemeToggle />
+          </div>
+        </div>
+
         <Link
           href="/trash"
           className="flex items-center justify-between rounded-lg border border-foreground/10 p-4 transition-colors hover:border-foreground/20"
@@ -57,6 +68,13 @@ export default function SettingsPage() {
           <div className="mt-4">
             <LogoutButton />
           </div>
+        </div>
+
+        <div className="rounded-lg border border-foreground/10 p-4">
+          <h3 className="font-medium">About</h3>
+          <p className="mt-2 text-sm text-foreground/60">
+            Made with love by Fauli
+          </p>
         </div>
       </div>
     </div>

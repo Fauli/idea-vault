@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/db'
 import { requireAuth } from '@/lib/auth'
 import { addLinkSchema, type AddLinkInput } from '@/lib/validations/link'
+import { fetchUrlMetadata } from '@/lib/metadata'
 
 /**
  * Add a link to an item
@@ -23,11 +24,16 @@ export async function addLink(input: AddLinkInput) {
     throw new Error('Item not found')
   }
 
+  // Fetch metadata from URL (gracefully fails to empty object)
+  const metadata = await fetchUrlMetadata(validated.url)
+
   const link = await prisma.itemLink.create({
     data: {
       itemId: validated.itemId,
-      title: validated.title || null,
+      title: validated.title || metadata.title || null,
       url: validated.url,
+      description: metadata.description || null,
+      imageUrl: metadata.imageUrl || null,
     },
   })
 

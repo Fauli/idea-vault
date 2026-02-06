@@ -3,6 +3,7 @@
 import { useTransition, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
+import { useToast } from '@/components/ui/toast'
 import {
   markDone,
   restoreItem,
@@ -20,6 +21,7 @@ type ItemActionsProps = {
 
 export function ItemActions({ id, status, pinned }: ItemActionsProps) {
   const router = useRouter()
+  const { showToast } = useToast()
   const [pending, startTransition] = useTransition()
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
@@ -29,6 +31,18 @@ export function ItemActions({ id, status, pinned }: ItemActionsProps) {
   const handleMarkDone = () => {
     startTransition(async () => {
       await markDone(id)
+      showToast('Marked as done', {
+        type: 'info',
+        duration: 5000,
+        action: {
+          label: 'Undo',
+          onClick: () => {
+            startTransition(async () => {
+              await restoreItem(id)
+            })
+          },
+        },
+      })
     })
   }
 
@@ -41,6 +55,19 @@ export function ItemActions({ id, status, pinned }: ItemActionsProps) {
   const handleArchive = () => {
     startTransition(async () => {
       await archiveItem(id)
+      showToast('Archived', {
+        type: 'info',
+        duration: 5000,
+        action: {
+          label: 'Undo',
+          onClick: () => {
+            startTransition(async () => {
+              await restoreItem(id)
+              router.push(`/items/${id}`)
+            })
+          },
+        },
+      })
       router.push('/items')
     })
   }
@@ -48,6 +75,20 @@ export function ItemActions({ id, status, pinned }: ItemActionsProps) {
   const handleDelete = () => {
     startTransition(async () => {
       await deleteItem(id)
+      showToast('Moved to trash', {
+        type: 'info',
+        duration: 5000,
+        action: {
+          label: 'Undo',
+          onClick: async () => {
+            const { restoreFromTrash } = await import('@/lib/actions/items')
+            startTransition(async () => {
+              await restoreFromTrash(id)
+              router.push(`/items/${id}`)
+            })
+          },
+        },
+      })
       router.push('/items')
     })
   }

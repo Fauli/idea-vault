@@ -23,7 +23,12 @@ export async function ItemList({ filters, sort, hasFilters, activeStatus }: Item
   }
 
   if (items.length === 0) {
-    return <EmptyFilteredState hasFilters={hasFilters || !!activeStatus} />
+    return (
+      <EmptyFilteredState
+        hasFilters={hasFilters || !!activeStatus}
+        searchTerm={filters.search}
+      />
+    )
   }
 
   return (

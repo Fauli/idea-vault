@@ -3,9 +3,10 @@ import { Button } from '@/components/ui/button'
 
 type EmptyFilteredStateProps = {
   hasFilters: boolean
+  searchTerm?: string
 }
 
-export function EmptyFilteredState({ hasFilters }: EmptyFilteredStateProps) {
+export function EmptyFilteredState({ hasFilters, searchTerm }: EmptyFilteredStateProps) {
   if (!hasFilters) {
     // No items at all in this status
     return (
@@ -55,7 +56,18 @@ export function EmptyFilteredState({ hasFilters }: EmptyFilteredStateProps) {
           />
         </svg>
       </div>
-      <p className="mt-4 text-sm text-foreground/60">No items match your filters</p>
+      {searchTerm ? (
+        <>
+          <p className="mt-4 text-sm text-foreground/60">
+            No results for &ldquo;<span className="font-medium">{searchTerm}</span>&rdquo;
+          </p>
+          <p className="mt-1 text-xs text-foreground/40">
+            Try a different search term or clear filters
+          </p>
+        </>
+      ) : (
+        <p className="mt-4 text-sm text-foreground/60">No items match your filters</p>
+      )}
       <Link href="/items" className="mt-4">
         <Button variant="secondary" size="sm">
           Clear filters

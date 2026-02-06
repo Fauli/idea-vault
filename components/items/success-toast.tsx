@@ -14,13 +14,13 @@ export function SuccessToast() {
     const updated = searchParams.get('updated')
 
     if (created === 'true') {
-      showToast('Item created!', 'success')
+      showToast('Item created!', { type: 'success' })
       // Clean up URL
       const url = new URL(window.location.href)
       url.searchParams.delete('created')
       router.replace(url.pathname, { scroll: false })
     } else if (updated === 'true') {
-      showToast('Changes saved!', 'success')
+      showToast('Changes saved!', { type: 'success' })
       // Clean up URL
       const url = new URL(window.location.href)
       url.searchParams.delete('updated')
