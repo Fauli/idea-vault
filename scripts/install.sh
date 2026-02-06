@@ -166,8 +166,9 @@ sleep 8
 #############################################
 
 log "Running database migrations..."
-# Use docker compose run with entrypoint override to avoid prisma.config.ts issues
-$DOCKER_CMD compose run --rm --entrypoint "" app sh -c "npx prisma migrate deploy --schema=./prisma/schema.prisma"
+# Use docker compose run with entrypoint override and pass DATABASE_URL from .env
+DB_URL=$(grep -E '^DATABASE_URL=' "$ENV_FILE" | cut -d'=' -f2- | tr -d '"')
+$DOCKER_CMD compose run --rm --entrypoint "" -e DATABASE_URL="$DB_URL" app sh -c "npx prisma migrate deploy --schema=./prisma/schema.prisma"
 
 log "Application running on port 3000"
 
