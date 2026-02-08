@@ -129,3 +129,50 @@ export function validateImageFile(
 
   return { valid: true }
 }
+
+/**
+ * Download and cache a remote image
+ * Returns the local URL or null if download fails
+ */
+export async function cacheRemoteImage(
+  remoteUrl: string
+): Promise<string | null> {
+  try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 10000) // 10s timeout
+
+    const response = await fetch(remoteUrl, {
+      signal: controller.signal,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; PocketIdeasBot/1.0)',
+      },
+    })
+
+    clearTimeout(timeoutId)
+
+    if (!response.ok) return null
+
+    const contentType = response.headers.get('content-type') || ''
+
+    // Only cache actual images
+    const isImage = ALLOWED_IMAGE_TYPES.some(type => contentType.includes(type.split('/')[1]))
+    if (!isImage) return null
+
+    const buffer = Buffer.from(await response.arrayBuffer())
+
+    // Skip if too large
+    if (buffer.length > MAX_FILE_SIZE) return null
+
+    // Determine mime type
+    let mimeType = 'image/jpeg' // default
+    if (contentType.includes('png')) mimeType = 'image/png'
+    else if (contentType.includes('webp')) mimeType = 'image/webp'
+    else if (contentType.includes('gif')) mimeType = 'image/gif'
+
+    const { url } = await uploadImage(buffer, mimeType)
+    return url
+  } catch {
+    // Network error, timeout, etc - return null
+    return null
+  }
+}

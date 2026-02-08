@@ -36,22 +36,31 @@ export async function ItemList({ filters, sort, hasFilters, activeStatus }: Item
       <p className="text-sm text-foreground/60">
         {items.length} item{items.length !== 1 ? 's' : ''}
       </p>
-      {items.map((item) => (
-        <ItemCard
-          key={item.id}
-          id={item.id}
-          title={item.title}
-          type={item.type}
-          description={item.description}
-          priority={item.priority}
-          status={item.status}
-          tags={item.tags}
-          pinned={item.pinned}
-          dueDate={item.dueDate}
-          thumbnail={item.images[0] ?? null}
-          imageCount={item._count.images}
-        />
-      ))}
+      {items.map((item) => {
+        // Use uploaded image if available, otherwise fall back to link preview image
+        const thumbnail = item.images[0]
+          ? item.images[0]
+          : item.links[0]?.imageUrl
+            ? { id: item.links[0].id, url: item.links[0].imageUrl }
+            : null
+
+        return (
+          <ItemCard
+            key={item.id}
+            id={item.id}
+            title={item.title}
+            type={item.type}
+            description={item.description}
+            priority={item.priority}
+            status={item.status}
+            tags={item.tags}
+            pinned={item.pinned}
+            dueDate={item.dueDate}
+            thumbnail={thumbnail}
+            imageCount={item._count.images}
+          />
+        )
+      })}
     </div>
   )
 }

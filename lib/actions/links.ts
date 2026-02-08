@@ -5,6 +5,7 @@ import { prisma } from '@/lib/db'
 import { requireAuth } from '@/lib/auth'
 import { addLinkSchema, type AddLinkInput } from '@/lib/validations/link'
 import { fetchUrlMetadata } from '@/lib/metadata'
+import { cacheRemoteImage } from '@/lib/storage'
 
 /**
  * Add a link to an item
@@ -27,13 +28,19 @@ export async function addLink(input: AddLinkInput) {
   // Fetch metadata from URL (gracefully fails to empty object)
   const metadata = await fetchUrlMetadata(validated.url)
 
+  // Cache the og:image locally if available
+  let cachedImageUrl: string | null = null
+  if (metadata.imageUrl) {
+    cachedImageUrl = await cacheRemoteImage(metadata.imageUrl)
+  }
+
   const link = await prisma.itemLink.create({
     data: {
       itemId: validated.itemId,
       title: validated.title || metadata.title || null,
       url: validated.url,
       description: metadata.description || null,
-      imageUrl: metadata.imageUrl || null,
+      imageUrl: cachedImageUrl, // Use cached local URL instead of remote
     },
   })
 

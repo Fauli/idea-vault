@@ -122,8 +122,9 @@ if [ -f "$COMPOSE_OVERRIDE" ]; then
 else
     log "Creating production docker-compose override..."
 
-    # Extract DB password from .env
+    # Extract secrets from .env
     DB_PASSWORD=$(grep DATABASE_URL "$ENV_FILE" | sed 's/.*postgres:\([^@]*\)@.*/\1/')
+    SESSION_SECRET=$(grep SESSION_SECRET "$ENV_FILE" | cut -d'=' -f2-)
 
     cat > "$COMPOSE_OVERRIDE" << EOF
 services:
@@ -133,8 +134,9 @@ services:
     restart: unless-stopped
 
   app:
-    env_file:
-      - .env
+    environment:
+      DATABASE_URL: postgresql://postgres:${DB_PASSWORD}@db:5432/pocket_ideas?schema=public
+      SESSION_SECRET: ${SESSION_SECRET}
     restart: unless-stopped
 EOF
 fi
@@ -161,14 +163,27 @@ $DOCKER_CMD compose up -d
 log "Waiting for database to be ready..."
 sleep 8
 
+# Ensure DB password matches .env (in case volume was created with different password)
+DB_PASSWORD=$(grep DATABASE_URL "$ENV_FILE" | sed 's/.*postgres:\([^@]*\)@.*/\1/')
+log "Syncing database password..."
+$DOCKER_CMD exec idea-vault-db-1 psql -U postgres -c "ALTER USER postgres WITH PASSWORD '$DB_PASSWORD';" 2>/dev/null || true
+
 #############################################
 # Run database migrations
 #############################################
 
 log "Running database migrations..."
-# Use docker compose run with entrypoint override and pass DATABASE_URL from .env
+# Prisma 7.x requires a config file - create a minimal one on the fly
 DB_URL=$(grep -E '^DATABASE_URL=' "$ENV_FILE" | cut -d'=' -f2- | tr -d '"')
-$DOCKER_CMD compose run --rm --entrypoint "" -e DATABASE_URL="$DB_URL" app sh -c "npx prisma migrate deploy --schema=./prisma/schema.prisma"
+$DOCKER_CMD compose run --rm --entrypoint "" -e DATABASE_URL="$DB_URL" app sh -c '
+cat > /tmp/prisma.config.js << PRISMAEOF
+module.exports = {
+  schema: "/app/prisma/schema.prisma",
+  datasource: { url: process.env.DATABASE_URL },
+}
+PRISMAEOF
+npx prisma migrate deploy --config=/tmp/prisma.config.js
+'
 
 log "Application running on port 3000"
 

@@ -145,6 +145,12 @@ export async function getItems(
         orderBy: [{ sortOrder: 'asc' }, { createdAt: 'asc' }],
         select: { id: true, url: true },
       },
+      links: {
+        where: { imageUrl: { not: null } },
+        take: 1,
+        orderBy: { createdAt: 'asc' },
+        select: { id: true, imageUrl: true },
+      },
       _count: {
         select: { images: true },
       },
