@@ -47,7 +47,7 @@ export function TypeFilter({ className }: TypeFilterProps) {
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
   const scrollRef = useRef<HTMLDivElement>(null)
-  const [showRightGradient, setShowRightGradient] = useState(false)
+  const [showRightGradient, setShowRightGradient] = useState(true) // Default to true, hide after check
   const [showLeftGradient, setShowLeftGradient] = useState(false)
 
   const currentType = searchParams.get('type') as ItemType | null
@@ -92,12 +92,12 @@ export function TypeFilter({ className }: TypeFilterProps) {
     <div className={cn('relative', className)}>
       {/* Left gradient */}
       {showLeftGradient && (
-        <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-8 bg-gradient-to-r from-background to-transparent" />
+        <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-12 bg-gradient-to-r from-background via-background/80 to-transparent" />
       )}
 
       {/* Right gradient */}
       {showRightGradient && (
-        <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-8 bg-gradient-to-l from-background to-transparent" />
+        <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-12 bg-gradient-to-l from-background via-background/80 to-transparent" />
       )}
 
       <div
