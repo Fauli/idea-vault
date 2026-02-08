@@ -129,72 +129,75 @@ export function ItemActions({ id, status, pinned }: ItemActionsProps) {
 
   return (
     <div className="space-y-3">
-      {/* Primary actions */}
-      <div className="flex flex-wrap gap-2">
-        {!isArchived && (
-          <>
-            {isDone ? (
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={handleRestore}
-                disabled={pending}
-              >
-                {pending ? 'Restoring...' : 'Mark as Active'}
-              </Button>
-            ) : (
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={handleMarkDone}
-                disabled={pending}
-              >
-                {pending ? 'Updating...' : 'Mark as Done'}
-              </Button>
-            )}
-          </>
-        )}
+      {/* Primary action - full width */}
+      {!isArchived && (
+        <>
+          {isDone ? (
+            <Button
+              variant="secondary"
+              className="w-full"
+              onClick={handleRestore}
+              disabled={pending}
+            >
+              {pending ? 'Restoring...' : 'Mark as Active'}
+            </Button>
+          ) : (
+            <Button
+              variant="primary"
+              className="w-full"
+              onClick={handleMarkDone}
+              disabled={pending}
+            >
+              {pending ? 'Updating...' : 'Mark as Done'}
+            </Button>
+          )}
+        </>
+      )}
 
-        {isArchived && (
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={handleRestore}
-            disabled={pending}
-          >
-            {pending ? 'Restoring...' : 'Restore'}
-          </Button>
-        )}
+      {isArchived && (
+        <Button
+          variant="secondary"
+          className="w-full"
+          onClick={handleRestore}
+          disabled={pending}
+        >
+          {pending ? 'Restoring...' : 'Restore'}
+        </Button>
+      )}
 
+      {/* Secondary actions */}
+      <div className="flex gap-2">
         <Button
           variant="ghost"
           size="sm"
           onClick={handleTogglePin}
           disabled={pending}
+          className="flex-1"
         >
           {pinned ? 'Unpin' : 'Pin'}
         </Button>
-      </div>
 
-      {/* Destructive actions */}
-      <div className="flex flex-wrap gap-2 border-t border-foreground/10 pt-3">
         {!isArchived && (
           <Button
             variant="ghost"
             size="sm"
             onClick={handleArchive}
             disabled={pending}
-            className="text-foreground/50 hover:text-foreground"
+            className="flex-1 text-foreground/60 hover:text-foreground"
           >
             Archive
           </Button>
         )}
+      </div>
+
+      {/* Destructive action - separate with clear danger styling */}
+      <div className="border-t border-foreground/10 pt-3">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => setShowDeleteConfirm(true)}
           disabled={pending}
-          className="text-red-600 hover:bg-red-500/10 hover:text-red-600"
+          className="w-full text-red-600 hover:bg-red-500/10 hover:text-red-600"
         >
           Delete
         </Button>

@@ -98,7 +98,7 @@ export function SearchInput({ className }: SearchInputProps) {
         <button
           type="button"
           onClick={handleClear}
-          className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-foreground/50 hover:bg-foreground/10 hover:text-foreground"
+          className="absolute right-1 top-1/2 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full text-foreground/50 hover:bg-foreground/10 hover:text-foreground"
           aria-label="Clear search"
         >
           <svg
@@ -107,7 +107,7 @@ export function SearchInput({ className }: SearchInputProps) {
             viewBox="0 0 24 24"
             strokeWidth={2}
             stroke="currentColor"
-            className="h-4 w-4"
+            className="h-5 w-5"
           >
             <path
               strokeLinecap="round"

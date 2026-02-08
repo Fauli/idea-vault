@@ -49,13 +49,13 @@ export function ItemCard({
       <div className="flex items-start gap-3">
         {/* Thumbnail */}
         {thumbnail && (
-          <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-foreground/5">
+          <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-foreground/5">
             <Image
               src={thumbnail.url}
               alt=""
               fill
               className="object-cover"
-              sizes="64px"
+              sizes="80px"
             />
             {/* Image count badge */}
             {imageCount > 1 && (

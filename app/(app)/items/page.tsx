@@ -3,6 +3,7 @@ import { type ItemFilters, type ItemSort } from '@/lib/actions/items'
 import { ItemList } from '@/components/items/item-list'
 import { ItemListSkeleton } from '@/components/items/item-card-skeleton'
 import { FilterBar } from '@/components/items/filter-bar'
+import { PullToRefresh } from '@/components/items/pull-to-refresh'
 import type { ItemType, ItemStatus } from '@/app/generated/prisma/enums'
 
 type SearchParams = Promise<{
@@ -63,17 +64,19 @@ export default async function ItemsPage({ searchParams }: ItemsPageProps) {
   const hasFilters = !!(params.q || params.type || params.sort || params.tag)
 
   return (
-    <div className="space-y-4">
-      <FilterBar activeTag={params.tag} />
+    <PullToRefresh>
+      <div className="space-y-4">
+        <FilterBar activeTag={params.tag} />
 
-      <Suspense fallback={<ItemListSkeleton count={5} />}>
-        <ItemList
-          filters={filters}
-          sort={sort}
-          hasFilters={hasFilters}
-          activeStatus={params.status}
-        />
-      </Suspense>
-    </div>
+        <Suspense fallback={<ItemListSkeleton count={5} />}>
+          <ItemList
+            filters={filters}
+            sort={sort}
+            hasFilters={hasFilters}
+            activeStatus={params.status}
+          />
+        </Suspense>
+      </div>
+    </PullToRefresh>
   )
 }
